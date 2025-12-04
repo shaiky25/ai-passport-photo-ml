@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.hypothesis/
+.tox/
+
+# Environment variables
+.env
+.env.local
+!.env.example
+
+# Logs
+logs/
+*.log
+analytics.log
+
+# Temporary files
+temp_*
+*.tmp
+*.bak
+
+# Application specific
+training_data/
+learned_profile.json
+temp_*.jpg
+temp_*.png
+temp_*.heic
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
