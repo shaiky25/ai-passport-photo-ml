@@ -175,6 +175,7 @@ passport-photo-ai/backend/logs/
 passport-photo-ai/backend/training_data/
 passport-photo-ai/backend/learned_profile.json
 passport-photo-ai/backend/temp_*
+passport-photo-ai/backend/models/
 passport-photo-ai/frontend/build/
 
 # Sensitive files

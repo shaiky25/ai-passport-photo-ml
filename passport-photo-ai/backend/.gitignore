@@ -39,6 +39,7 @@ temp_*
 # Application specific
 training_data/
 learned_profile.json
+models/
 temp_*.jpg
 temp_*.png
 temp_*.heic
