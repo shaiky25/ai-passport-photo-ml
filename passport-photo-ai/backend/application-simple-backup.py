@@ -1,7 +1,5 @@
 """
-Hybrid Passport Photo Validator with Email Integration
-Includes: Basic Face Detection, Email Integration, Watermark System
-Optimized for AWS Elastic Beanstalk deployment
+Passport Photo Validator with AWS SES Email Integration
 """
 
 from flask import Flask, request, jsonify
@@ -28,126 +26,52 @@ application.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
 # Initialize AWS SES client
 ses_client = boto3.client('ses', region_name='us-east-1')
 
-class HybridPassportPhotoProcessor:
+class SimplePassportPhotoProcessor:
     PASSPORT_SIZE_PIXELS = (600, 600)
-    HEAD_HEIGHT_MIN = 0.50
-    HEAD_HEIGHT_MAX = 0.69
     
     def __init__(self):
         pass
     
-    def enhanced_face_detection(self, image_path):
-        """Enhanced face detection using image analysis heuristics"""
+    def simple_face_detection(self, image_path):
+        """Simple placeholder face detection - always returns success for demo"""
         try:
             img = Image.open(image_path)
             width, height = img.size
             
-            # Convert to grayscale for analysis
-            gray_img = img.convert('L')
-            
-            # Enhanced heuristics for face detection
-            # Look for face-like regions using image statistics
-            
-            # Assume face is in center region with some variance
-            center_x, center_y = width // 2, height // 2
-            
-            # Estimate face region based on image composition
-            face_width = int(width * 0.4)  # Face typically 40% of width
-            face_height = int(height * 0.5)  # Face typically 50% of height
-            
-            # Position face slightly above center (typical portrait composition)
-            face_x = center_x - face_width // 2
-            face_y = int(center_y - face_height * 0.6)
-            
-            # Ensure face region is within image bounds
-            face_x = max(0, min(face_x, width - face_width))
-            face_y = max(0, min(face_y, height - face_height))
-            
-            # Calculate metrics
-            head_height_percent = face_height / height
-            horizontal_center = abs((face_x + face_width/2) - width/2) / width < 0.3
-            
-            # Enhanced validation based on image characteristics
-            face_area = face_width * face_height
-            image_area = width * height
-            face_area_percent = (face_area / image_area) * 100
-            
-            # Check if dimensions suggest a portrait photo
-            is_portrait = height >= width
-            aspect_ratio = width / height if height > 0 else 1
-            
-            # More sophisticated validation
-            face_size_ok = 15.0 <= face_area_percent <= 60.0  # Reasonable face size
-            aspect_ratio_ok = 0.6 <= aspect_ratio <= 1.5  # Portrait or square-ish
-            head_height_ok = self.HEAD_HEIGHT_MIN <= head_height_percent <= self.HEAD_HEIGHT_MAX
-            
-            # Overall validity
-            face_valid = face_size_ok and aspect_ratio_ok and head_height_ok
+            # Simple heuristic: assume face is in center 60% of image
+            face_width = int(width * 0.6)
+            face_height = int(height * 0.6)
+            face_x = int(width * 0.2)
+            face_y = int(height * 0.2)
             
             return {
-                "faces_detected": 1 if face_valid else 0,
-                "valid": face_valid,
-                "face_bbox": {"x": int(face_x), "y": int(face_y), "width": int(face_width), "height": int(face_height)},
-                "eyes_detected": 2 if face_valid else 0,
-                "head_height_percent": round(head_height_percent, 2),
-                "head_height_valid": head_height_ok,
-                "horizontally_centered": horizontal_center,
-                "face_area_percent": round(face_area_percent, 1),
-                "face_aspect_ratio": round(aspect_ratio, 2),
-                "face_size_ok": face_size_ok,
-                "aspect_ratio_ok": aspect_ratio_ok,
-                "image_dimensions": {"width": width, "height": height},
-                "error": None if face_valid else f"Image analysis suggests this may not be a suitable passport photo"
+                "faces_detected": 1, 
+                "valid": True,
+                "face_bbox": {"x": face_x, "y": face_y, "width": face_width, "height": face_height},
+                "eyes_detected": 2,
+                "head_height_percent": 0.60,
+                "head_height_valid": True,
+                "horizontally_centered": True,
+                "image_dimensions": {"width": width, "height": height}
             }
-            
         except Exception as e:
             return {"faces_detected": 0, "valid": False, "error": str(e)}
     
     def process_to_passport_photo(self, image_path, face_bbox=None, remove_bg=False, remove_watermark=False):
-        """Process image to passport photo with intelligent cropping"""
+        """Simple image processing without OpenCV"""
         img = Image.open(image_path)
         
         if img.mode != 'RGB': 
             img = img.convert('RGB')
         
-        # Intelligent cropping based on face detection
-        if face_bbox and face_bbox.get('x') is not None:
-            fx, fy, fw, fh = face_bbox['x'], face_bbox['y'], face_bbox['width'], face_bbox['height']
-            
-            # Calculate crop region to center the face properly
-            # Passport photos need head to be 50-69% of image height
-            target_head_ratio = 0.60
-            crop_size = int(fh / target_head_ratio)
-            
-            # Center the face horizontally
-            face_center_x = fx + fw / 2
-            crop_x = int(face_center_x - crop_size / 2)
-            
-            # Position face in upper portion (passport photo standard)
-            crop_y = int(fy - (crop_size * 0.15))
-            
-            # Ensure crop region is within image bounds
-            crop_x = max(0, min(crop_x, img.size[0] - crop_size))
-            crop_y = max(0, min(crop_y, img.size[1] - crop_size))
-            crop_size = min(crop_size, img.size[0] - crop_x, img.size[1] - crop_y)
-            
-            img_cropped = img.crop((crop_x, crop_y, crop_x + crop_size, crop_y + crop_size))
-        else:
-            # Fallback: center crop to square
-            size = min(img.size)
-            left = (img.size[0] - size) // 2
-            top = (img.size[1] - size) // 2
-            img_cropped = img.crop((left, top, left + size, top + size))
+        # Simple center crop to square
+        size = min(img.size)
+        left = (img.size[0] - size) // 2
+        top = (img.size[1] - size) // 2
+        img_cropped = img.crop((left, top, left + size, top + size))
         
         # Resize to passport dimensions
         img_passport = img_cropped.resize(self.PASSPORT_SIZE_PIXELS, Image.Resampling.LANCZOS)
-        
-        # Apply subtle enhancements
-        enhancer = ImageEnhance.Brightness(img_passport)
-        img_passport = enhancer.enhance(1.05)
-        
-        enhancer = ImageEnhance.Contrast(img_passport)
-        img_passport = enhancer.enhance(1.1)
         
         # Add watermark unless removal is authorized
         if not remove_watermark:
@@ -159,28 +83,25 @@ class HybridPassportPhotoProcessor:
         return buffer
     
     def add_watermark(self, img):
-        """Add a professional watermark"""
+        """Add a simple watermark"""
         try:
             watermarked = img.copy()
             draw = ImageDraw.Draw(watermarked)
             
             watermark_text = "PassportPhotoAI.com"
             
-            # Position watermark at bottom right
-            x = watermarked.width - 180
-            y = watermarked.height - 25
+            # Simple text watermark at bottom right
+            x = watermarked.width - 200
+            y = watermarked.height - 30
             
-            # Semi-transparent background
-            draw.rectangle([x-5, y-3, x+175, y+20], fill=(255, 255, 255, 200))
-            draw.text((x, y), watermark_text, fill=(100, 100, 100))
-            
+            draw.text((x, y), watermark_text, fill=(128, 128, 128))
             return watermarked
         except Exception as e:
             print(f"Watermark error: {e}")
             return img
 
 # Initialize processor
-processor = HybridPassportPhotoProcessor()
+processor = SimplePassportPhotoProcessor()
 
 # Simple in-memory store for OTPs
 otp_store = {}
@@ -193,6 +114,7 @@ def send_otp_email(email, otp):
     try:
         sender_email = os.environ.get('SENDER_EMAIL', 'noreply@yourdomain.com')
         
+        # Email content
         subject = "Your PassportPhotoAI Verification Code"
         body_text = f"""
 Your verification code is: {otp}
@@ -224,14 +146,26 @@ PassportPhotoAI Team
         </html>
         """
         
+        # Send email
         response = ses_client.send_email(
-            Destination={'ToAddresses': [email]},
+            Destination={
+                'ToAddresses': [email],
+            },
             Message={
                 'Body': {
-                    'Html': {'Charset': 'UTF-8', 'Data': body_html},
-                    'Text': {'Charset': 'UTF-8', 'Data': body_text},
+                    'Html': {
+                        'Charset': 'UTF-8',
+                        'Data': body_html,
+                    },
+                    'Text': {
+                        'Charset': 'UTF-8',
+                        'Data': body_text,
+                    },
                 },
-                'Subject': {'Charset': 'UTF-8', 'Data': subject},
+                'Subject': {
+                    'Charset': 'UTF-8',
+                    'Data': subject,
+                },
             },
             Source=sender_email,
         )
@@ -241,20 +175,23 @@ PassportPhotoAI Team
         
     except ClientError as e:
         error_code = e.response['Error']['Code']
-        print(f"SES error: {error_code} - {e.response['Error']['Message']}")
+        if error_code == 'MessageRejected':
+            print(f"Email rejected: {e.response['Error']['Message']}")
+            print("Make sure your email is verified in AWS SES")
+        else:
+            print(f"SES error: {error_code} - {e.response['Error']['Message']}")
         return False
     except Exception as e:
         print(f"Email sending error: {e}")
         return False
 
-# API Endpoints
 @application.route('/', methods=['GET'])
 def root():
-    return jsonify({"status": "healthy", "message": "Passport Photo AI (Hybrid) is running"}), 200
+    return jsonify({"status": "healthy", "message": "Passport Photo AI is running"}), 200
 
 @application.route('/api/health', methods=['GET'])
 def health_check():
-    return jsonify({"status": "healthy", "message": "Passport Photo AI (Hybrid) is running"}), 200
+    return jsonify({"status": "healthy", "message": "Passport Photo AI is running"}), 200
 
 @application.route('/api/send-otp', methods=['POST'])
 def send_otp():
@@ -272,6 +209,7 @@ def send_otp():
             'verified': False
         }
         
+        # Send OTP via AWS SES
         if send_otp_email(email, otp):
             return jsonify({"success": True, "message": "OTP sent to your email"}), 200
         else:
@@ -296,6 +234,7 @@ def verify_otp():
         
         stored_data = otp_store[email]
         
+        # Check if OTP expired (10 minutes)
         if datetime.now(timezone.utc).timestamp() - stored_data['timestamp'] > 600:
             del otp_store[email]
             return jsonify({"error": "OTP expired"}), 400
@@ -312,24 +251,17 @@ def verify_otp():
 
 @application.route('/api/full-workflow', methods=['POST'])
 def full_workflow():
-    """Enhanced workflow with better face detection"""
-    start_time = datetime.now()
-    print(f"[{start_time}] Processing request started")
-    
+    """Simplified workflow without AI analysis"""
     if 'image' not in request.files:
         return jsonify({"error": "No image provided"}), 400
     
     file = request.files['image']
-    print(f"File received: {file.filename}, size: {len(file.read())} bytes")
-    file.seek(0)  # Reset file pointer after reading size
-    
     temp_path = f"temp_{datetime.now().timestamp()}"
     file.save(temp_path)
-    print(f"File saved to: {temp_path}")
     
     try:
-        # Enhanced face detection
-        face_analysis = processor.enhanced_face_detection(temp_path)
+        # Simple face detection
+        face_analysis = processor.simple_face_detection(temp_path)
         
         img = Image.open(temp_path)
         width, height = img.size
@@ -355,22 +287,11 @@ def full_workflow():
             remove_watermark=remove_watermark
         )
         
-        # Create AI analysis placeholder
-        ai_analysis = {
-            "compliant": face_analysis.get("valid", False),
-            "issues": [] if face_analysis.get("valid", False) else ["Image analysis suggests this may not be suitable for passport photos"]
-        }
-        
-        end_time = datetime.now()
-        processing_time = (end_time - start_time).total_seconds()
-        print(f"[{end_time}] Processing completed in {processing_time:.2f} seconds")
-        
         return jsonify({
             "success": True, "feasible": True,
-            "analysis": {"face_detection": face_analysis, "ai_analysis": ai_analysis},
+            "analysis": {"face_detection": face_analysis, "ai_analysis": {"compliant": True, "issues": []}},
             "processed_image": base64.b64encode(processed_buffer.getvalue()).decode('utf-8'),
-            "message": "Photo successfully processed with enhanced analysis.",
-            "processing_time": processing_time
+            "message": "Photo successfully processed."
         })
         
     except Exception as e:

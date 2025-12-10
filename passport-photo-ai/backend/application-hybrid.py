@@ -248,10 +248,6 @@ PassportPhotoAI Team
         return False
 
 # API Endpoints
-@application.route('/', methods=['GET'])
-def root():
-    return jsonify({"status": "healthy", "message": "Passport Photo AI (Hybrid) is running"}), 200
-
 @application.route('/api/health', methods=['GET'])
 def health_check():
     return jsonify({"status": "healthy", "message": "Passport Photo AI (Hybrid) is running"}), 200
@@ -313,19 +309,12 @@ def verify_otp():
 @application.route('/api/full-workflow', methods=['POST'])
 def full_workflow():
     """Enhanced workflow with better face detection"""
-    start_time = datetime.now()
-    print(f"[{start_time}] Processing request started")
-    
     if 'image' not in request.files:
         return jsonify({"error": "No image provided"}), 400
     
     file = request.files['image']
-    print(f"File received: {file.filename}, size: {len(file.read())} bytes")
-    file.seek(0)  # Reset file pointer after reading size
-    
     temp_path = f"temp_{datetime.now().timestamp()}"
     file.save(temp_path)
-    print(f"File saved to: {temp_path}")
     
     try:
         # Enhanced face detection
@@ -361,16 +350,11 @@ def full_workflow():
             "issues": [] if face_analysis.get("valid", False) else ["Image analysis suggests this may not be suitable for passport photos"]
         }
         
-        end_time = datetime.now()
-        processing_time = (end_time - start_time).total_seconds()
-        print(f"[{end_time}] Processing completed in {processing_time:.2f} seconds")
-        
         return jsonify({
             "success": True, "feasible": True,
             "analysis": {"face_detection": face_analysis, "ai_analysis": ai_analysis},
             "processed_image": base64.b64encode(processed_buffer.getvalue()).decode('utf-8'),
-            "message": "Photo successfully processed with enhanced analysis.",
-            "processing_time": processing_time
+            "message": "Photo successfully processed with enhanced analysis."
         })
         
     except Exception as e:
@@ -382,33 +366,6 @@ def full_workflow():
     finally:
         if os.path.exists(temp_path):
             os.remove(temp_path)
-
-@application.route('/api/log-event', methods=['POST', 'OPTIONS'])
-def log_event():
-    if request.method == 'OPTIONS':
-        # Handle CORS preflight request
-        response = jsonify({'status': 'ok'})
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        return response
-    
-    try:
-        event_data = request.json
-        if not event_data:
-            return jsonify({"error": "No event data provided"}), 400
-        
-        # Add server-side timestamp
-        event_data['timestamp'] = datetime.now(timezone.utc).isoformat()
-        
-        # Log the event (simplified logging)
-        print(f"Analytics Event: {json.dumps(event_data)}")
-        
-        return jsonify({"success": True, "message": "Event logged"}), 200
-        
-    except Exception as e:
-        print(f"Log event error: {e}")
-        return jsonify({"error": "Failed to log event"}), 500
 
 if __name__ == '__main__':
     application.run(debug=False, host='0.0.0.0', port=5000)
