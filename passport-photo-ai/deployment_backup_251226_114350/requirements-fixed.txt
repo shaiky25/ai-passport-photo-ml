@@ -1,0 +1,17 @@
+# Fixed requirements for Elastic Beanstalk deployment
+# Compatible numpy and onnxruntime versions
+flask==3.0.0
+flask-cors==4.0.0
+gunicorn==21.2.0
+pillow==10.1.0
+opencv-python-headless==4.8.1.78
+numpy==1.24.3
+# Use compatible onnxruntime version
+onnxruntime==1.15.1
+# Use rembg with compatible versions
+rembg==2.0.50
+pillow-heif==0.13.0
+boto3==1.34.0
+python-dotenv==1.0.0
+mediapipe==0.10.9
+hypothesis==6.92.1

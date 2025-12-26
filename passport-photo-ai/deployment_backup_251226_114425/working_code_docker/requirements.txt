@@ -1,0 +1,11 @@
+flask>=3.0.0
+flask-cors==4.0.0
+pillow
+opencv-python-headless
+numpy
+anthropic==0.8.1
+python-dotenv==1.0.0
+gunicorn==21.2.0
+pyheif==0.7.0
+rembg==2.0.50
+mtcnn==0.1.1

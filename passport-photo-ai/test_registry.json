@@ -1,0 +1,144 @@
+{
+  "test_registry": {
+    "description": "Central registry of all tests in the deployment pipeline",
+    "last_updated": "2024-12-26",
+    "categories": {
+      "infrastructure": {
+        "description": "Tests for AWS infrastructure and configuration",
+        "tests": [
+          {
+            "name": "AWS Region Consistency",
+            "script": "check_aws_region_consistency.py",
+            "description": "Ensures all AWS resources are in the same region to avoid cross-region costs",
+            "added_date": "2024-12-26",
+            "feature": "cost-optimization",
+            "required": true,
+            "timeout": 60
+          }
+        ]
+      },
+      "dependencies": {
+        "description": "Tests for Python dependencies and system requirements",
+        "tests": [
+          {
+            "name": "Dependency Validation",
+            "script": "test_dependencies.py",
+            "description": "Validates all critical Python dependencies are working",
+            "added_date": "2024-12-26",
+            "feature": "enhanced-face-detection",
+            "required": true,
+            "timeout": 120
+          }
+        ]
+      },
+      "core_functionality": {
+        "description": "Tests for core passport photo processing features",
+        "tests": [
+          {
+            "name": "Comprehensive Cropping Compliance",
+            "script": "comprehensive_cropping_test.py",
+            "description": "Tests government-compliant cropping for all image types",
+            "added_date": "2024-12-26",
+            "feature": "government-compliant-cropping",
+            "required": true,
+            "timeout": 120,
+            "success_pattern": "🏆 OVERALL COMPLIANCE: ✅ PASS"
+          },
+          {
+            "name": "Glasses Edge Case",
+            "script": "test_glasses_specific.py",
+            "description": "Tests proper headroom for users wearing glasses",
+            "added_date": "2024-12-26",
+            "feature": "government-compliant-cropping",
+            "required": true,
+            "timeout": 120,
+            "success_pattern": "Space above detected face: 189px \\(33.9%\\)"
+          }
+        ]
+      },
+      "api_endpoints": {
+        "description": "Tests for REST API endpoints",
+        "tests": [
+          {
+            "name": "Health Endpoint",
+            "type": "curl",
+            "url": "http://127.0.0.1:5000/api/health",
+            "description": "Tests basic health endpoint functionality",
+            "added_date": "2024-12-26",
+            "feature": "basic-api",
+            "required": true,
+            "timeout": 10,
+            "success_pattern": "\"status\":\"healthy\""
+          },
+          {
+            "name": "Pipeline Config Endpoint",
+            "type": "curl",
+            "url": "http://127.0.0.1:5000/api/pipeline-config",
+            "description": "Tests pipeline configuration endpoint",
+            "added_date": "2024-12-26",
+            "feature": "pipeline-feature-flags",
+            "required": true,
+            "timeout": 10,
+            "success_pattern": "\"intelligent_cropping\":true"
+          }
+        ]
+      },
+      "performance": {
+        "description": "Tests for application performance",
+        "tests": [
+          {
+            "name": "Response Time Validation",
+            "type": "performance",
+            "url": "http://127.0.0.1:5000/api/health",
+            "description": "Ensures API response times are under 1 second",
+            "added_date": "2024-12-26",
+            "feature": "performance-monitoring",
+            "required": false,
+            "timeout": 10,
+            "threshold": 1.0
+          }
+        ]
+      }
+    },
+    "future_tests": {
+      "description": "Planned tests for upcoming features",
+      "tests": [
+        {
+          "name": "Multi-Face Detection",
+          "script": "test_multi_face_detection.py",
+          "description": "Tests handling of images with multiple faces",
+          "feature": "enhanced-face-detection",
+          "priority": "high"
+        },
+        {
+          "name": "Background Removal Quality",
+          "script": "test_background_removal.py",
+          "description": "Tests quality of AI background removal",
+          "feature": "background-removal",
+          "priority": "medium"
+        },
+        {
+          "name": "Email OTP Integration",
+          "script": "test_email_otp.py",
+          "description": "Tests email OTP verification flow",
+          "feature": "email-verification",
+          "priority": "high"
+        },
+        {
+          "name": "Image Format Support",
+          "script": "test_image_formats.py",
+          "description": "Tests support for HEIC, PNG, JPEG formats",
+          "feature": "image-format-support",
+          "priority": "medium"
+        },
+        {
+          "name": "Load Testing",
+          "script": "test_load_performance.py",
+          "description": "Tests application under concurrent load",
+          "feature": "scalability",
+          "priority": "low"
+        }
+      ]
+    }
+  }
+}

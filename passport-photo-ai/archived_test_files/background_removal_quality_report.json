@@ -1,0 +1,81 @@
+{
+  "summary": {
+    "avg_quality_ratio": 1.0987977299053797,
+    "avg_similarity": 0.8686438251942094,
+    "avg_edge_ratio": 1.0709730473270207,
+    "avg_bg_ratio": 42.622296344330046,
+    "avg_fg_ratio": 0.5242198923617675,
+    "deployment_ready": true
+  },
+  "detailed_results": [
+    {
+      "image": "test_upscaled_face.jpg",
+      "rembg_metrics": {
+        "edge_preservation": 0.6608844021043652,
+        "background_uniformity": 0.0,
+        "foreground_preservation": 0.9984105836101883,
+        "overall_quality": 0.497788495714366
+      },
+      "our_metrics": {
+        "edge_preservation": 0.5148760972578265,
+        "background_uniformity": 0.2914790418738945,
+        "foreground_preservation": 0.5565728493909192,
+        "overall_quality": 0.4380263007441815,
+        "similarity_to_reference": 0.8894876613741087
+      },
+      "comparison": {
+        "edge_preservation_ratio": 0.7790713407948135,
+        "background_uniformity_ratio": 29.14790418738945,
+        "foreground_preservation_ratio": 0.557458883677282,
+        "overall_quality_ratio": 0.8799446040141586,
+        "similarity_to_rembg": 0.8894876613741087
+      }
+    },
+    {
+      "image": "test_high_res_face.jpg",
+      "rembg_metrics": {
+        "edge_preservation": 0.3446840148698885,
+        "background_uniformity": 0.0,
+        "foreground_preservation": 0.9354534485416667,
+        "overall_quality": 0.38404123902346654
+      },
+      "our_metrics": {
+        "edge_preservation": 0.5177822643267588,
+        "background_uniformity": 0.987189848456007,
+        "foreground_preservation": 0.016265289583333287,
+        "overall_quality": 0.5550902055554305,
+        "similarity_to_reference": 0.8005872323910133
+      },
+      "comparison": {
+        "edge_preservation_ratio": 1.5021940153569684,
+        "background_uniformity_ratio": 98.7189848456007,
+        "foreground_preservation_ratio": 0.017387599146371422,
+        "overall_quality_ratio": 1.445392184878125,
+        "similarity_to_rembg": 0.8005872323910133
+      }
+    },
+    {
+      "image": "final_deployed_output.jpg",
+      "rembg_metrics": {
+        "edge_preservation": 0.6789952904238619,
+        "background_uniformity": 0.0,
+        "foreground_preservation": 0.9999027003703703,
+        "overall_quality": 0.5036693972382696
+      },
+      "our_metrics": {
+        "edge_preservation": 0.6325885328836425,
+        "background_uniformity": 0.0,
+        "foreground_preservation": 0.9977161074074075,
+        "overall_quality": 0.48909139208731495,
+        "similarity_to_reference": 0.915856581817506
+      },
+      "comparison": {
+        "edge_preservation_ratio": 0.9316537858292802,
+        "background_uniformity_ratio": 0.0,
+        "foreground_preservation_ratio": 0.9978131942616487,
+        "overall_quality_ratio": 0.9710564008238557,
+        "similarity_to_rembg": 0.915856581817506
+      }
+    }
+  ]
+}

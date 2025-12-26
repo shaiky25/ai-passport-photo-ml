@@ -1,0 +1,15 @@
+flask
+flask_cors
+Pillow
+opencv-python-headless
+numpy
+python-dotenv
+pillow-heif
+rembg
+gunicorn
+anthropic
+boto3
+pytest
+hypothesis
+pytest-mock
+pytest-cov

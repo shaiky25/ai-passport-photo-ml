@@ -1,0 +1,13 @@
+{
+  "mean": {
+    "head_height_ratio": 0.5744651878359793,
+    "face_center_x_ratio": 0.494721203229844,
+    "head_top_y_ratio": 0.15806093189576595
+  },
+  "std_dev": {
+    "head_height_ratio": 0.07704139422774707,
+    "face_center_x_ratio": 0.01518403916489758,
+    "head_top_y_ratio": 0.03476156260351482
+  },
+  "sample_size": 24
+}
